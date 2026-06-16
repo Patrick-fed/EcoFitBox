@@ -1,0 +1,26 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Firebase service account keys
+**/ecofit-51ca9-firebase-adminsdk-*.json
+
+# IDE directories
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node
+node_modules/
+
+# Build
+target/
+build/
+dist/
