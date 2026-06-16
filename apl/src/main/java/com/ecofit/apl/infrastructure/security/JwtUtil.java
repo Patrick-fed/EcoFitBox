@@ -21,10 +21,11 @@ public class JwtUtil {
         this.expiration = expiration;
     }
 
-    public String gerarToken(Integer usuarioId, String email) {
+    public String gerarToken(Integer usuarioId, String email, String tipo) {
         return Jwts.builder()
                 .subject(usuarioId.toString())
                 .claim("email", email)
+                .claim("tipo", tipo)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)

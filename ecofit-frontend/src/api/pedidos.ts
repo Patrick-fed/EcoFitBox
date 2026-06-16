@@ -16,8 +16,14 @@ export const criarPedido = (data: PedidoRequest) =>
 export const checkout = (data: CheckoutRequest) =>
   api.post<PedidoResponse>('/pedidos/checkout', data).then((r) => r.data);
 
+export const avancarStatus = (id: number) =>
+  api.post(`/pedidos/${id}/avancar-status`).then((r) => r.data);
+
 export const confirmarEntrega = (id: number) =>
   api.post(`/pedidos/${id}/confirmar-entrega`).then((r) => r.data);
+
+export const atualizarStatusPedido = (id: number, status: string) =>
+  api.patch(`/pedidos/${id}/status`, { status }).then((r) => r.data);
 
 export const avaliarPedido = (id: number, data: AvaliacaoRequest) =>
   api.post(`/pedidos/${id}/avaliar`, data).then((r) => r.data);

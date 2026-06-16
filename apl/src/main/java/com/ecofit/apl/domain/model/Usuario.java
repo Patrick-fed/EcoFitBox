@@ -27,8 +27,8 @@ public class Usuario {
     @Column(name = "acompanhamento_nutricional", nullable = false)
     private Boolean acompanhamentoNutricional = false;
 
-    @Column
-    private String tipo = "comum";
+    @Enumerated(EnumType.STRING)
+    private TipoUsuario tipo = TipoUsuario.CLIENTE;
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -45,6 +45,6 @@ public class Usuario {
     public Boolean getAcompanhamentoNutricional() { return acompanhamentoNutricional; }
     public void setAcompanhamentoNutricional(Boolean acompanhamentoNutricional) { this.acompanhamentoNutricional = acompanhamentoNutricional; }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public TipoUsuario getTipo() { return tipo; }
+    public void setTipo(TipoUsuario tipo) { this.tipo = tipo; }
 }

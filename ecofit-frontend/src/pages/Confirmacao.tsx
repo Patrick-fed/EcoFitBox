@@ -3,9 +3,9 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { buscarPedido } from '../api/pedidos';
+import { buscarPedido, avancarStatus } from '../api/pedidos';
 import type { PedidoResponse } from '../types';
-import { CheckCircle, Clock, ArrowLeft, Home } from 'lucide-react';
+import { CheckCircle, Clock, Package, ArrowLeft, Home, Truck } from 'lucide-react';
 
 export function Confirmacao() {
   const { id } = useParams();
@@ -14,14 +14,36 @@ export function Confirmacao() {
   const state = location.state as any;
 
   const [pedido, setPedido] = useState<PedidoResponse | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const atualizarPedido = () => {
     if (!id) return;
     buscarPedido(Number(id)).then(setPedido).catch(() => {});
+  };
+
+  useEffect(() => {
+    atualizarPedido();
   }, [id]);
+
+  const handleAvancar = async () => {
+    if (!id) return;
+    setLoading(true);
+    try {
+      const atualizado = await avancarStatus(Number(id));
+      setPedido(atualizado);
+    } catch {
+      alert('Erro ao avançar status');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const isPix = state?.metodo === 'pix';
   const total = state?.total || 0;
+
+  const statusOrdem = ['pendente', 'pago', 'em_preparo', 'entregue'];
+
+  const stepIndex = pedido ? statusOrdem.indexOf(pedido.status) : 0;
 
   return (
     <div className="min-h-screen bg-[#EDE7DF]">
@@ -66,22 +88,45 @@ export function Confirmacao() {
             </div>
           )}
 
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-yellow-400" />
-              <span className="text-xs text-[#5B5B3A]">Pendente</span>
-            </div>
-            <div className="w-8 h-px bg-[#D8D4C5]" />
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-gray-300" />
-              <span className="text-xs text-[#5B5B3A]">Preparo</span>
-            </div>
-            <div className="w-8 h-px bg-[#D8D4C5]" />
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-gray-300" />
-              <span className="text-xs text-[#5B5B3A]">Entrega</span>
-            </div>
-          </div>
+          {pedido && (
+            <>
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <div className="flex items-center gap-1">
+                  <div className={`w-3 h-3 rounded-full ${stepIndex >= 0 ? 'bg-yellow-400' : 'bg-gray-300'}`} />
+                  <span className={`text-xs ${stepIndex >= 0 ? 'text-yellow-600 font-semibold' : 'text-[#5B5B3A]'}`}>Pendente</span>
+                </div>
+                <div className="w-8 h-px bg-[#D8D4C5]" />
+                <div className="flex items-center gap-1">
+                  <div className={`w-3 h-3 rounded-full ${stepIndex >= 1 ? 'bg-green-500' : 'bg-gray-300'}`} />
+                  <span className={`text-xs ${stepIndex >= 1 ? 'text-green-600 font-semibold' : 'text-[#5B5B3A]'}`}>Pago</span>
+                </div>
+                <div className="w-8 h-px bg-[#D8D4C5]" />
+                <div className="flex items-center gap-1">
+                  <div className={`w-3 h-3 rounded-full ${stepIndex >= 2 ? 'bg-blue-500' : 'bg-gray-300'}`} />
+                  <span className={`text-xs ${stepIndex >= 2 ? 'text-blue-600 font-semibold' : 'text-[#5B5B3A]'}`}>Preparo</span>
+                </div>
+                <div className="w-8 h-px bg-[#D8D4C5]" />
+                <div className="flex items-center gap-1">
+                  <div className={`w-3 h-3 rounded-full ${stepIndex >= 3 ? 'bg-green-500' : 'bg-gray-300'}`} />
+                  <span className={`text-xs ${stepIndex >= 3 ? 'text-green-600 font-semibold' : 'text-[#5B5B3A]'}`}>Entrega</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3 justify-center mb-3">
+                {pedido.status !== 'entregue' && (
+                  <Button
+                    variant="primary"
+                    onClick={handleAvancar}
+                    disabled={loading}
+                    className="flex items-center gap-2"
+                  >
+                    {pedido.status === 'pago' ? <Package className="w-4 h-4" /> : <Truck className="w-4 h-4" />}
+                    {loading ? 'Avançando...' : pedido.status === 'pago' ? 'Iniciar Preparo' : 'Simular Entrega'}
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
 
           <div className="flex gap-3 justify-center">
             <Button variant="outline" onClick={() => navigate('/dashboard')} className="flex items-center gap-2">

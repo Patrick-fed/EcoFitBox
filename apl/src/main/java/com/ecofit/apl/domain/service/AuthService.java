@@ -42,7 +42,7 @@ public class AuthService {
                 request.getAcompanhamentoNutricional() != null ? request.getAcompanhamentoNutricional() : false);
         usuario = usuarioRepository.save(usuario);
 
-        String token = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail());
+        String token = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail(), usuario.getTipo().name());
         return new AuthResponse(token, UsuarioResponse.from(usuario));
     }
 
@@ -55,7 +55,7 @@ public class AuthService {
             throw new RuntimeException("Email ou senha inválidos");
         }
 
-        String token = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail());
+        String token = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail(), usuario.getTipo().name());
         return new AuthResponse(token, UsuarioResponse.from(usuario));
     }
 
@@ -66,7 +66,7 @@ public class AuthService {
 
         if (existente.isPresent()) {
             Usuario usuario = existente.get().getUsuario();
-            String token = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail());
+            String token = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail(), usuario.getTipo().name());
             return new AuthResponse(token, UsuarioResponse.from(usuario));
         }
 
@@ -85,7 +85,7 @@ public class AuthService {
         identidade.setEmailProvedor(request.getEmail());
         identidadeRepository.save(identidade);
 
-        String token = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail());
+        String token = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail(), usuario.getTipo().name());
         return new AuthResponse(token, UsuarioResponse.from(usuario));
     }
 
@@ -104,7 +104,7 @@ public class AuthService {
             var existente = identidadeRepository.findByProvedorAndProvedorId("google", uid);
             if (existente.isPresent()) {
                 Usuario usuario = existente.get().getUsuario();
-                String jwt = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail());
+                String jwt = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail(), usuario.getTipo().name());
                 return new AuthResponse(jwt, UsuarioResponse.from(usuario));
             }
 
@@ -123,7 +123,7 @@ public class AuthService {
             identidade.setEmailProvedor(email);
             identidadeRepository.save(identidade);
 
-            String jwt = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail());
+            String jwt = jwtUtil.gerarToken(usuario.getId(), usuario.getEmail(), usuario.getTipo().name());
             return new AuthResponse(jwt, UsuarioResponse.from(usuario));
         } catch (Exception e) {
             throw new RuntimeException("Token Firebase inválido: " + e.getMessage());

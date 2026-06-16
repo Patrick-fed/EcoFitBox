@@ -83,9 +83,24 @@ public class PedidoController {
         return ResponseEntity.ok(PedidoResponse.from(service.salvar(pedido)));
     }
 
+    @PostMapping("/{id}/avancar-status")
+    public ResponseEntity<?> avancarStatus(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(PedidoResponse.from(service.avancarStatus(id)));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PatchMapping("/{id}/status")
-    public ResponseEntity<PedidoResponse> atualizarStatus(@PathVariable Integer id, @RequestBody StatusRequest request) {
-        return ResponseEntity.ok(PedidoResponse.from(service.atualizarStatus(id, request.getStatus())));
+    public ResponseEntity<?> atualizarStatus(@PathVariable Integer id, @RequestBody StatusRequest request) {
+        try {
+            return ResponseEntity.ok(PedidoResponse.from(service.atualizarStatusEntrega(id, request.getStatus())));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/{id}/confirmar-entrega")

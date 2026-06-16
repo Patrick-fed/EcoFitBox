@@ -1,3 +1,5 @@
+export type TipoUsuario = 'CLIENTE' | 'ENTREGADOR' | 'ADMIN';
+
 export interface Usuario {
   id: number;
   nome: string;
@@ -5,7 +7,7 @@ export interface Usuario {
   email: string;
   endereco: string;
   acompanhamentoNutricional: boolean;
-  tipo?: string;
+  tipo?: TipoUsuario;
 }
 
 export interface AuthResponse {
@@ -83,6 +85,7 @@ export interface PedidoResponse {
   enderecoEntrega: string;
   metodoPagamento: string;
   taxaEntrega: number;
+  total: number;
   dataConfirmacaoEntrega?: string;
   avaliacao?: number;
   paymentId?: string;

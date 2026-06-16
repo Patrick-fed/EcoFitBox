@@ -1,5 +1,7 @@
 package com.ecofit.apl.api.dto;
 
+import com.ecofit.apl.domain.model.TipoUsuario;
+
 public class UsuarioResponse {
     private Integer id;
     private String nome;
@@ -7,7 +9,7 @@ public class UsuarioResponse {
     private String email;
     private String endereco;
     private Boolean acompanhamentoNutricional;
-    private String tipo;
+    private TipoUsuario tipo;
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -22,8 +24,8 @@ public class UsuarioResponse {
     public Boolean getAcompanhamentoNutricional() { return acompanhamentoNutricional; }
     public void setAcompanhamentoNutricional(Boolean acompanhamentoNutricional) { this.acompanhamentoNutricional = acompanhamentoNutricional; }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public TipoUsuario getTipo() { return tipo; }
+    public void setTipo(TipoUsuario tipo) { this.tipo = tipo; }
 
     public static UsuarioResponse from(com.ecofit.apl.domain.model.Usuario u) {
         UsuarioResponse r = new UsuarioResponse();

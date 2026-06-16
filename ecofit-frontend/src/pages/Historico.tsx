@@ -4,12 +4,13 @@ import { Navbar } from '../components/layout/Navbar';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
-import { listarPedidosPorUsuario, confirmarEntrega, avaliarPedido } from '../api/pedidos';
+import { listarPedidosPorUsuario, avancarStatus, confirmarEntrega, avaliarPedido } from '../api/pedidos';
 import type { PedidoResponse } from '../types';
-import { Package, Star, RefreshCw, Clock, CheckCircle, Truck } from 'lucide-react';
+import { Package, Star, RefreshCw, Clock, CheckCircle, Truck, DollarSign } from 'lucide-react';
 
 const statusConfig: Record<string, { label: string; icon: typeof Clock; color: string }> = {
   pendente: { label: 'Pendente', icon: Clock, color: 'text-yellow-500' },
+  pago: { label: 'Pago', icon: DollarSign, color: 'text-green-600' },
   em_preparo: { label: 'Em Preparo', icon: Package, color: 'text-blue-500' },
   entregue: { label: 'Entregue', icon: CheckCircle, color: 'text-green-500' },
 };
@@ -26,6 +27,15 @@ export function Historico() {
       listarPedidosPorUsuario(usuario.id).then(setPedidos).catch(() => {});
     }
   }, [usuario]);
+
+  const handleAvancar = async (id: number) => {
+    try {
+      const atualizado = await avancarStatus(id);
+      setPedidos((prev) => prev.map((p) => (p.id === id ? { ...p, status: atualizado.status } : p)));
+    } catch {
+      alert('Erro ao avançar status');
+    }
+  };
 
   const handleConfirmar = async (id: number) => {
     try {
@@ -92,7 +102,8 @@ export function Historico() {
 
                       <div className="flex items-center gap-4 mt-2 text-sm">
                         <span className="text-[#5B5B3A]">Pagamento: <span className="font-medium capitalize">{pedido.metodoPagamento}</span></span>
-                        <span className="text-[#5B5B3A]">Total: <span className="font-bold text-[#3C5A1A]">R$ {(pedido.taxaEntrega || 0).toFixed(2)}</span></span>
+                        <span className="text-[#5B5B3A]">Frete: <span className="font-medium">{pedido.taxaEntrega > 0 ? 'R$ 5,00' : 'Grátis (plano ativo)'}</span></span>
+                        <span className="text-[#5B5B3A]">Total: <span className="font-bold text-[#3C5A1A]">R$ {(pedido.total ?? 0).toFixed(2)}</span></span>
                       </div>
                     </div>
 
@@ -104,6 +115,16 @@ export function Historico() {
                           onClick={() => setAvaliando(pedido.id)}
                         >
                           Avaliar
+                        </Button>
+                      )}
+                      {pedido.status === 'pago' && (
+                        <Button
+                          variant="primary"
+                          className="text-xs px-3 py-1.5"
+                          onClick={() => handleAvancar(pedido.id)}
+                        >
+                          <Package className="w-3 h-3 mr-1" />
+                          Iniciar Preparo
                         </Button>
                       )}
                       {pedido.status === 'em_preparo' && (

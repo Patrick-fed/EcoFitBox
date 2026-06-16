@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PedidoService {
@@ -31,6 +32,36 @@ public class PedidoService {
     public Pedido atualizarStatus(Integer id, String status) {
         Pedido pedido = repository.findById(id).orElseThrow();
         pedido.setStatus(status);
+        return repository.save(pedido);
+    }
+
+    @Transactional
+    public Pedido avancarStatus(Integer id) {
+        Pedido pedido = repository.findById(id).orElseThrow();
+        switch (pedido.getStatus()) {
+            case "pendente" -> pedido.setStatus("pago");
+            case "pago" -> pedido.setStatus("em_preparo");
+            case "em_preparo" -> pedido.setStatus("em_andamento");
+            case "em_andamento" -> {
+                pedido.setStatus("entregue");
+                pedido.setDataConfirmacaoEntrega(LocalDateTime.now());
+            }
+            default -> throw new IllegalStateException("Pedido já foi finalizado ou está em estado inválido: " + pedido.getStatus());
+        }
+        return repository.save(pedido);
+    }
+
+    @Transactional
+    public Pedido atualizarStatusEntrega(Integer id, String novoStatus) {
+        Set<String> validos = Set.of("em_andamento", "entregue");
+        if (!validos.contains(novoStatus)) {
+            throw new IllegalArgumentException("Status de entrega inválido: " + novoStatus);
+        }
+        Pedido pedido = repository.findById(id).orElseThrow();
+        pedido.setStatus(novoStatus);
+        if ("entregue".equals(novoStatus)) {
+            pedido.setDataConfirmacaoEntrega(LocalDateTime.now());
+        }
         return repository.save(pedido);
     }
 

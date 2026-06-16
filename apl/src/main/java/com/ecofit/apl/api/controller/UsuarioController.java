@@ -61,6 +61,14 @@ public class UsuarioController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    @PatchMapping("/{id}/tipo")
+    public ResponseEntity<UsuarioResponse> atualizarTipo(@PathVariable Integer id, @RequestBody TipoRequest request) {
+        return service.buscarPorId(id).map(usuario -> {
+            usuario.setTipo(request.getTipo());
+            return ResponseEntity.ok(UsuarioResponse.from(service.salvar(usuario)));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Integer id) {
         if (service.buscarPorId(id).isEmpty()) return ResponseEntity.notFound().build();

@@ -1,6 +1,6 @@
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, Utensils, Shield } from 'lucide-react';
+import { LogOut, User, Utensils, Shield, Truck } from 'lucide-react';
 
 export function Navbar() {
   const { usuario, logout } = useAuth();
@@ -19,7 +19,17 @@ export function Navbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        {usuario?.tipo === 'admin' && (
+        {(usuario?.tipo === 'ADMIN' || usuario?.tipo === 'ENTREGADOR') && (
+          <button
+            onClick={() => navigate('/entregador')}
+            className="flex items-center gap-1 text-sm text-[#5B7B3A] hover:text-[#3C5A1A] transition-colors cursor-pointer"
+            title="Entregas"
+          >
+            <Truck className="w-4 h-4" />
+            <span className="hidden sm:inline">Entregas</span>
+          </button>
+        )}
+        {usuario?.tipo === 'ADMIN' && (
           <button
             onClick={() => navigate('/admin')}
             className="flex items-center gap-1 text-sm text-[#5B7B3A] hover:text-[#3C5A1A] transition-colors cursor-pointer"
