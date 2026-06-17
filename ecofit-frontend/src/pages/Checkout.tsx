@@ -3,25 +3,30 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { buscarBox } from '../api/boxes';
 import { checkout } from '../api/pedidos';
 import { criarPagamento } from '../api/pagamento';
 import { buscarAssinaturaAtiva } from '../api/assinaturas';
 import type { BoxResponse } from '../types';
 import { ArrowLeft, CreditCard, QrCode, CheckCircle, Truck } from 'lucide-react';
+import QRCode from 'qrcode';
+
+interface CheckoutState {
+  boxId?: number;
+}
 
 export function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { usuario } = useAuth();
-  const boxId = (location.state as any)?.boxId;
+  const boxId = (location.state as CheckoutState)?.boxId;
 
   const [box, setBox] = useState<BoxResponse | null>(null);
   const [planoAtivo, setPlanoAtivo] = useState(false);
   const [metodoPagamento, setMetodoPagamento] = useState<'pix' | 'cartao'>('pix');
   const [loading, setLoading] = useState(false);
-  const [qrCode, setQrCode] = useState('');
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState('');
 
   const taxaEntrega = planoAtivo ? 0 : 5;
   const total = (box?.preco || 0) + taxaEntrega;
@@ -30,7 +35,7 @@ export function CheckoutPage() {
     if (!boxId || !usuario) return;
     buscarBox(boxId).then(setBox).catch(() => navigate('/dashboard'));
     buscarAssinaturaAtiva(usuario.id).then((a) => setPlanoAtivo(a.ativo)).catch(() => {});
-  }, [boxId, usuario]);
+  }, [boxId, usuario, navigate]);
 
   const handleFinalizar = async () => {
     if (!usuario || !box) return;
@@ -49,7 +54,7 @@ export function CheckoutPage() {
       });
 
       if (metodoPagamento === 'pix') {
-        setQrCode(pagamento.paymentId);
+        QRCode.toDataURL(pagamento.paymentId, { width: 256 }).then(setQrCodeDataUrl);
       }
 
       navigate(`/confirmacao/${pedido.id}`, {
@@ -170,11 +175,10 @@ export function CheckoutPage() {
             </div>
           )}
 
-          {metodoPagamento === 'pix' && qrCode && (
+          {metodoPagamento === 'pix' && qrCodeDataUrl && (
             <div className="mt-4 p-4 bg-[#F5F2EB] rounded-lg text-center">
-              <QrCode className="w-32 h-32 mx-auto mb-2 text-[#3C5A1A]" />
+              <img src={qrCodeDataUrl} alt="QR Code Pix" className="w-48 h-48 mx-auto mb-2" />
               <p className="text-sm font-medium text-[#3C5A1A]">Escaneie o QR Code</p>
-              <p className="text-xs text-[#5B5B3A] mt-1 break-all">{qrCode}</p>
             </div>
           )}
         </Card>

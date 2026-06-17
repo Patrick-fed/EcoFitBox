@@ -9,8 +9,6 @@ export function EntregadorPedidos() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => { carregarPedidos(); }, []);
-
   const carregarPedidos = async () => {
     try {
       const todos = await listarPedidos();
@@ -32,6 +30,8 @@ export function EntregadorPedidos() {
       setLoading(false);
     }
   };
+
+  useEffect(() => { carregarPedidos(); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   const statusLabel: Record<string, string> = {
     em_preparo: 'Em preparo',

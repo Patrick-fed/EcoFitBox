@@ -10,15 +10,15 @@ public class BoxMaisPedidaResponse {
     private String tipo;
     private Long totalPedidos;
 
-    public static BoxMaisPedidaResponse from(Object[] row) {
-        BoxMaisPedidaResponse r = new BoxMaisPedidaResponse();
-        r.setId(((Number) row[0]).intValue());
-        r.setNome((String) row[1]);
-        r.setDescricao((String) row[2]);
-        r.setPreco((BigDecimal) row[3]);
-        r.setTipo((String) row[4]);
-        r.setTotalPedidos(((Number) row[5]).longValue());
-        return r;
+    public BoxMaisPedidaResponse() {}
+
+    public BoxMaisPedidaResponse(Integer id, String nome, String descricao, BigDecimal preco, String tipo, Long totalPedidos) {
+        this.id = id;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.preco = preco;
+        this.tipo = tipo;
+        this.totalPedidos = totalPedidos;
     }
 
     public Integer getId() { return id; }

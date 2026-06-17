@@ -2,6 +2,7 @@ package com.ecofit.apl.api.controller;
 
 import com.ecofit.apl.api.dto.*;
 import com.ecofit.apl.domain.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registrar(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> registrar(@Valid @RequestBody RegisterRequest request) {
         try {
             return ResponseEntity.ok(authService.registrar(request));
         } catch (RuntimeException e) {
@@ -25,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
             return ResponseEntity.ok(authService.login(request));
         } catch (RuntimeException e) {

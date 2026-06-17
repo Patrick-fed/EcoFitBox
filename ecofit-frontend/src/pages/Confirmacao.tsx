@@ -7,22 +7,23 @@ import { buscarPedido, avancarStatus } from '../api/pedidos';
 import type { PedidoResponse } from '../types';
 import { CheckCircle, Clock, Package, ArrowLeft, Home, Truck } from 'lucide-react';
 
+interface ConfirmacaoState {
+  metodo?: string;
+  total?: number;
+}
+
 export function Confirmacao() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as any;
+  const state = location.state as ConfirmacaoState;
 
   const [pedido, setPedido] = useState<PedidoResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const atualizarPedido = () => {
+  useEffect(() => {
     if (!id) return;
     buscarPedido(Number(id)).then(setPedido).catch(() => {});
-  };
-
-  useEffect(() => {
-    atualizarPedido();
   }, [id]);
 
   const handleAvancar = async () => {

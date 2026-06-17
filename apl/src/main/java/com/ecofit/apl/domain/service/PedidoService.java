@@ -1,10 +1,15 @@
 package com.ecofit.apl.domain.service;
 
+import com.ecofit.apl.domain.model.Box;
 import com.ecofit.apl.domain.model.Pedido;
+import com.ecofit.apl.domain.model.Usuario;
+import com.ecofit.apl.domain.repository.BoxRepository;
 import com.ecofit.apl.domain.repository.PedidoRepository;
+import com.ecofit.apl.domain.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +19,16 @@ import java.util.Set;
 public class PedidoService {
 
     private final PedidoRepository repository;
+    private final BoxRepository boxRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final AssinaturaPlanoService assinaturaService;
 
-    public PedidoService(PedidoRepository repository) {
+    public PedidoService(PedidoRepository repository, BoxRepository boxRepository,
+                         UsuarioRepository usuarioRepository, AssinaturaPlanoService assinaturaService) {
         this.repository = repository;
+        this.boxRepository = boxRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.assinaturaService = assinaturaService;
     }
 
     public List<Pedido> listar() { return repository.findAll(); }
@@ -27,6 +39,28 @@ public class PedidoService {
 
     @Transactional
     public Pedido salvar(Pedido pedido) { return repository.save(pedido); }
+
+    @Transactional
+    public Pedido checkout(Integer boxId, Integer usuarioId, String metodoPagamento, String enderecoEntrega) {
+        Box box = boxRepository.findById(boxId)
+                .orElseThrow(() -> new RuntimeException("Box não encontrado"));
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        BigDecimal taxaEntrega = assinaturaService.buscarAtivoPorUsuario(usuario.getId())
+                .map(a -> BigDecimal.ZERO)
+                .orElse(new BigDecimal("5.00"));
+
+        String endereco = enderecoEntrega != null ? enderecoEntrega : usuario.getEndereco();
+
+        Pedido pedido = new Pedido();
+        pedido.setBox(box);
+        pedido.setUsuario(usuario);
+        pedido.setEnderecoEntrega(endereco);
+        pedido.setMetodoPagamento(metodoPagamento);
+        pedido.setTaxaEntrega(taxaEntrega);
+        return repository.save(pedido);
+    }
 
     @Transactional
     public Pedido atualizarStatus(Integer id, String status) {

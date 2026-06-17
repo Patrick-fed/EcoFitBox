@@ -47,15 +47,17 @@ public class PedidoResponse {
     public static PedidoResponse from(Pedido p) {
         PedidoResponse r = new PedidoResponse();
         r.setId(p.getId());
-        r.setBoxId(p.getBox().getId());
-        r.setUsuarioId(p.getUsuario().getId());
+        r.setBoxId(p.getBox() != null ? p.getBox().getId() : null);
+        r.setUsuarioId(p.getUsuario() != null ? p.getUsuario().getId() : null);
         r.setDataPedido(p.getDataPedido());
         r.setStatus(p.getStatus());
         r.setEnderecoEntrega(p.getEnderecoEntrega());
         r.setMetodoPagamento(p.getMetodoPagamento());
         r.setTaxaEntrega(p.getTaxaEntrega());
-        r.setTotal(p.getBox().getPreco().add(
-                p.getTaxaEntrega() != null ? p.getTaxaEntrega() : BigDecimal.ZERO));
+        BigDecimal preco = p.getBox() != null && p.getBox().getPreco() != null
+                ? p.getBox().getPreco() : BigDecimal.ZERO;
+        BigDecimal taxa = p.getTaxaEntrega() != null ? p.getTaxaEntrega() : BigDecimal.ZERO;
+        r.setTotal(preco.add(taxa));
         r.setDataConfirmacaoEntrega(p.getDataConfirmacaoEntrega());
         r.setAvaliacao(p.getAvaliacao());
         r.setPaymentId(p.getPaymentId());

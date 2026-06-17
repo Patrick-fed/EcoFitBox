@@ -1,14 +1,11 @@
 package com.ecofit.apl.api.controller;
 
 import com.ecofit.apl.api.dto.*;
-import com.ecofit.apl.domain.model.*;
-import com.ecofit.apl.domain.repository.*;
-import com.ecofit.apl.domain.service.AssinaturaPlanoService;
 import com.ecofit.apl.domain.service.PedidoService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -16,16 +13,9 @@ import java.util.List;
 public class PedidoController {
 
     private final PedidoService service;
-    private final BoxRepository boxRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final AssinaturaPlanoService assinaturaService;
 
-    public PedidoController(PedidoService service, BoxRepository boxRepository,
-                            UsuarioRepository usuarioRepository, AssinaturaPlanoService assinaturaService) {
+    public PedidoController(PedidoService service) {
         this.service = service;
-        this.boxRepository = boxRepository;
-        this.usuarioRepository = usuarioRepository;
-        this.assinaturaService = assinaturaService;
     }
 
     @GetMapping
@@ -46,41 +36,25 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoResponse> criar(@RequestBody PedidoRequest request) {
-        Box box = boxRepository.findById(request.getBoxId()).orElse(null);
-        Usuario usuario = usuarioRepository.findById(request.getUsuarioId()).orElse(null);
-        if (box == null || usuario == null) return ResponseEntity.badRequest().build();
-
-        Pedido pedido = new Pedido();
-        pedido.setBox(box);
-        pedido.setUsuario(usuario);
-        pedido.setEnderecoEntrega(request.getEnderecoEntrega());
-        pedido.setMetodoPagamento(request.getMetodoPagamento());
-        return ResponseEntity.ok(PedidoResponse.from(service.salvar(pedido)));
+    public ResponseEntity<PedidoResponse> criar(@Valid @RequestBody PedidoRequest request) {
+        try {
+            return ResponseEntity.ok(PedidoResponse.from(
+                    service.checkout(request.getBoxId(), request.getUsuarioId(),
+                            request.getMetodoPagamento(), request.getEnderecoEntrega())));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<?> checkout(@RequestBody CheckoutRequest request) {
-        Box box = boxRepository.findById(request.getBoxId()).orElse(null);
-        Usuario usuario = usuarioRepository.findById(request.getUsuarioId()).orElse(null);
-        if (box == null || usuario == null)
-            return ResponseEntity.badRequest().body("Box ou usuário não encontrado");
-
-        BigDecimal taxaEntrega = assinaturaService.buscarAtivoPorUsuario(usuario.getId())
-                .map(a -> BigDecimal.ZERO)
-                .orElse(new BigDecimal("5.00"));
-
-        String endereco = request.getEnderecoEntrega() != null
-                ? request.getEnderecoEntrega()
-                : usuario.getEndereco();
-
-        Pedido pedido = new Pedido();
-        pedido.setBox(box);
-        pedido.setUsuario(usuario);
-        pedido.setEnderecoEntrega(endereco);
-        pedido.setMetodoPagamento(request.getMetodoPagamento());
-        pedido.setTaxaEntrega(taxaEntrega);
-        return ResponseEntity.ok(PedidoResponse.from(service.salvar(pedido)));
+    public ResponseEntity<?> checkout(@Valid @RequestBody CheckoutRequest request) {
+        try {
+            return ResponseEntity.ok(PedidoResponse.from(
+                    service.checkout(request.getBoxId(), request.getUsuarioId(),
+                            request.getMetodoPagamento(), request.getEnderecoEntrega())));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/{id}/avancar-status")
@@ -113,7 +87,7 @@ public class PedidoController {
     }
 
     @PostMapping("/{id}/avaliar")
-    public ResponseEntity<?> avaliar(@PathVariable Integer id, @RequestBody AvaliacaoRequest request) {
+    public ResponseEntity<?> avaliar(@PathVariable Integer id, @Valid @RequestBody AvaliacaoRequest request) {
         try {
             return ResponseEntity.ok(PedidoResponse.from(service.avaliar(id, request.getNota())));
         } catch (IllegalArgumentException e) {

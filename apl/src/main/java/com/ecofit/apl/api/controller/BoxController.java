@@ -35,8 +35,7 @@ public class BoxController {
 
     @GetMapping("/mais-pedidas")
     public List<BoxMaisPedidaResponse> maisPedidas() {
-        return boxService.listarMaisPedidas().stream()
-                .map(BoxMaisPedidaResponse::from).toList();
+        return boxService.listarMaisPedidas();
     }
 
     @GetMapping("/{id}")

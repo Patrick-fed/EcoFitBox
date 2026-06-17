@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { listarPedidosPorUsuario, avancarStatus, confirmarEntrega, avaliarPedido } from '../api/pedidos';
 import type { PedidoResponse } from '../types';
 import { Package, Star, RefreshCw, Clock, CheckCircle, Truck, DollarSign } from 'lucide-react';

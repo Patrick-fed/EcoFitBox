@@ -1,14 +1,41 @@
+import { useState } from 'react';
 import { Diamond, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card } from '../ui/Card';
+import { criarAssinatura } from '../../api/assinaturas';
 import type { AssinaturaPlanoResponse } from '../../types';
 
 interface PlanosSidebarProps {
   assinatura: AssinaturaPlanoResponse | null;
+  usuarioId: number;
   open: boolean;
   onToggle: () => void;
+  onAssinaturaCriada?: (assinatura: AssinaturaPlanoResponse) => void;
 }
 
-export function PlanosSidebar({ assinatura, open, onToggle }: PlanosSidebarProps) {
+export function PlanosSidebar({ assinatura, usuarioId, open, onToggle, onAssinaturaCriada }: PlanosSidebarProps) {
+  const [loading, setLoading] = useState(false);
+
+  const handleContratarPlano = async (plano: string) => {
+    if (loading || assinatura?.ativo) return;
+
+    const dias = plano === 'Semanal' ? 7 : 30;
+    const hoje = new Date();
+    const dataInicio = hoje.toISOString().split('T')[0];
+    const dataFim = new Date(hoje.getTime() + dias * 86400000).toISOString().split('T')[0];
+
+    if (!window.confirm(`Deseja contratar o plano ${plano}?`)) return;
+
+    setLoading(true);
+    try {
+      const resposta = await criarAssinatura({ usuarioId, plano, dataInicio, dataFim });
+      onAssinaturaCriada?.(resposta);
+    } catch {
+      alert('Erro ao contratar plano. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <aside
       className={`fixed top-20 right-0 bottom-0 z-40 hidden lg:block transition-all duration-300 ${
@@ -32,16 +59,24 @@ export function PlanosSidebar({ assinatura, open, onToggle }: PlanosSidebarProps
             </div>
 
             <div className="space-y-3">
-              <div className="p-3 bg-[#F5F2EB] rounded-lg border border-[#D8D4C5]">
+              <button
+                onClick={() => handleContratarPlano('Semanal')}
+                disabled={loading || !!assinatura?.ativo}
+                className="w-full p-3 bg-[#F5F2EB] rounded-lg border border-[#D8D4C5] text-left hover:border-[#A3B27A] transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              >
                 <h3 className="font-semibold text-sm text-[#3C5A1A]">Semanal</h3>
                 <p className="text-xs text-[#5B5B3A]">7 dias de entrega</p>
                 <p className="text-xs text-[#8FA86A] font-medium">Frete grátis incluso</p>
-              </div>
-              <div className="p-3 bg-[#F5F2EB] rounded-lg border border-[#D8D4C5]">
+              </button>
+              <button
+                onClick={() => handleContratarPlano('Mensal')}
+                disabled={loading || !!assinatura?.ativo}
+                className="w-full p-3 bg-[#F5F2EB] rounded-lg border border-[#D8D4C5] text-left hover:border-[#A3B27A] transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              >
                 <h3 className="font-semibold text-sm text-[#3C5A1A]">Mensal</h3>
                 <p className="text-xs text-[#5B5B3A]">30 dias de entrega</p>
                 <p className="text-xs text-[#8FA86A] font-medium">Frete grátis incluso</p>
-              </div>
+              </button>
             </div>
 
             <div

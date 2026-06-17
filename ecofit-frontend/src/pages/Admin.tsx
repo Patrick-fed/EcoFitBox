@@ -45,12 +45,12 @@ function ItensTab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => { carregarItens(); }, []);
-
   const carregarItens = async () => {
     try { setItens(await listarItens()); }
     catch { setError('Erro ao carregar itens'); }
   };
+
+  useEffect(() => { carregarItens(); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   const resetForm = () => {
     setItemNome(''); setItemDescricao(''); setItemCusto(''); setItemValor('');
@@ -155,12 +155,12 @@ function UsuariosTab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => { carregarUsuarios(); }, []);
-
   const carregarUsuarios = async () => {
     try { setUsuarios(await listarUsuarios()); }
     catch { setError('Erro ao carregar usuários'); }
   };
+
+  useEffect(() => { carregarUsuarios(); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   const alterarTipo = async (id: number, tipo: string) => {
     setLoading(true);
@@ -236,12 +236,12 @@ function BoxesTab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => { carregarBoxes(); }, []);
-
   const carregarBoxes = async () => {
     try { setBoxes(await listarBoxes()); }
     catch { setError('Erro ao carregar boxes'); }
   };
+
+  useEffect(() => { carregarBoxes(); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   const resetForm = () => {
     setNome(''); setDescricao(''); setPreco(''); setTipo('padrao'); setTipoRefeicao(''); setShowForm(false); setError('');

@@ -1,9 +1,18 @@
 package com.ecofit.apl.api.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class CheckoutRequest {
+    @NotNull
     private Integer boxId;
+
+    @NotNull
     private Integer usuarioId;
+
+    @NotBlank
     private String metodoPagamento;
+
     private String enderecoEntrega;
 
     public Integer getBoxId() { return boxId; }

@@ -2,6 +2,8 @@
 .env
 .env.local
 .env.*.local
+**/.env
+**/.env.*
 
 # Firebase service account keys
 **/ecofit-51ca9-firebase-adminsdk-*.json

@@ -4,7 +4,7 @@ import { Navbar } from '../components/layout/Navbar';
 import { PlanosSidebar } from '../components/layout/PlanosSidebar';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { listarBoxesMaisPedidas, listarBoxes } from '../api/boxes';
 import { buscarAssinaturaAtiva } from '../api/assinaturas';
 import type { BoxMaisPedidaResponse, BoxResponse, AssinaturaPlanoResponse } from '../types';
@@ -210,7 +210,13 @@ export function Dashboard() {
         </div>
       </div>
 
-      <PlanosSidebar assinatura={assinatura} open={sidebarOpen} onToggle={() => setSidebarOpen((o) => !o)} />
+      <PlanosSidebar
+        assinatura={assinatura}
+        usuarioId={usuario!.id}
+        open={sidebarOpen}
+        onToggle={() => setSidebarOpen((o) => !o)}
+        onAssinaturaCriada={(a) => setAssinatura(a)}
+      />
     </div>
   );
 }

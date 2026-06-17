@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PresentationCover } from '../components/layout/PresentationCover';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { criarPlanoNutricional } from '../api/planoNutricional';
-import { ClipboardList, ArrowRight, FileText } from 'lucide-react';
+import { ClipboardList, ArrowRight, FileText, Upload } from 'lucide-react';
 
 export function PlanoNutricional() {
   const navigate = useNavigate();
@@ -19,6 +19,18 @@ export function PlanoNutricional() {
   const [gorduras, setGorduras] = useState('');
   const [observacoes, setObservacoes] = useState('');
   const [loading, setLoading] = useState(false);
+  const [arquivoPlano, setArquivoPlano] = useState('');
+  const [arquivoNome, setArquivoNome] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setArquivoNome(file.name);
+    const reader = new FileReader();
+    reader.onload = () => setArquivoPlano(reader.result as string);
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +46,7 @@ export function PlanoNutricional() {
         carboidratos: Number(carboidratos),
         gorduras: Number(gorduras),
         observacoes,
+        arquivoPlano: arquivoPlano || undefined,
       });
       navigate('/dashboard');
     } catch {
@@ -85,10 +98,30 @@ export function PlanoNutricional() {
             </div>
             <Input label="Observações" value={observacoes} onChange={(e) => setObservacoes(e.target.value)} placeholder="Observações adicionais" />
 
-            <div className="border-2 border-dashed border-[#D8D4C5] rounded-lg p-6 text-center">
-              <FileText className="w-8 h-8 text-[#8FA86A] mx-auto mb-2" />
-              <p className="text-sm text-[#5B5B3A]">Envie seu plano em PDF (opcional)</p>
-              <p className="text-xs text-[#8FA86A] mt-1">Clique para selecionar</p>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-[#D8D4C5] rounded-lg p-6 text-center cursor-pointer hover:border-[#A3B27A] transition-colors"
+            >
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                accept=".pdf"
+                className="hidden"
+              />
+              {arquivoNome ? (
+                <>
+                  <Upload className="w-8 h-8 text-[#3C5A1A] mx-auto mb-2" />
+                  <p className="text-sm font-medium text-[#3C5A1A]">{arquivoNome}</p>
+                  <p className="text-xs text-[#8FA86A] mt-1">Clique para trocar o arquivo</p>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-8 h-8 text-[#8FA86A] mx-auto mb-2" />
+                  <p className="text-sm text-[#5B5B3A]">Envie seu plano em PDF (opcional)</p>
+                  <p className="text-xs text-[#8FA86A] mt-1">Clique para selecionar</p>
+                </>
+              )}
             </div>
 
             <Button type="submit" variant="primary" className="w-full" disabled={loading}>

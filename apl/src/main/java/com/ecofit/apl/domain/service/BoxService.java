@@ -10,6 +10,8 @@ import com.ecofit.apl.domain.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ecofit.apl.api.dto.BoxMaisPedidaResponse;
+import org.springframework.data.domain.PageRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +45,7 @@ public class BoxService {
 
     public List<BoxItem> listarItensDaBox(Integer boxId) { return boxItemRepository.findByBoxId(boxId); }
 
-    public List<Object[]> listarMaisPedidas() { return boxRepository.findMaisPedidas(); }
+    public List<BoxMaisPedidaResponse> listarMaisPedidas() { return boxRepository.findMaisPedidas(PageRequest.of(0, 10)); }
 
     @Transactional
     public BoxItem adicionarItem(Integer boxId, Integer itemId, Integer quantidade) {

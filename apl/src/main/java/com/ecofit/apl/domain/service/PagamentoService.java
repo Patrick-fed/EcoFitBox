@@ -3,6 +3,7 @@ package com.ecofit.apl.domain.service;
 import com.ecofit.apl.api.dto.PagamentoResponse;
 import com.ecofit.apl.domain.model.Pedido;
 import com.ecofit.apl.domain.repository.PedidoRepository;
+import com.ecofit.apl.infrastructure.security.PaymentEncryption;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,9 +13,11 @@ import java.util.UUID;
 public class PagamentoService {
 
     private final PedidoRepository pedidoRepository;
+    private final PaymentEncryption paymentEncryption;
 
-    public PagamentoService(PedidoRepository pedidoRepository) {
+    public PagamentoService(PedidoRepository pedidoRepository, PaymentEncryption paymentEncryption) {
         this.pedidoRepository = pedidoRepository;
+        this.paymentEncryption = paymentEncryption;
     }
 
     @Transactional
@@ -28,8 +31,13 @@ public class PagamentoService {
 
         String paymentId = "pay_sandbox_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
 
+        try {
+            pedido.setPaymentId(paymentEncryption.encrypt(paymentId));
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao criptografar dados do pagamento", e);
+        }
+
         pedido.setStatus("pago");
-        pedido.setPaymentId(paymentId);
 
         if (metodoPagamento != null) {
             pedido.setMetodoPagamento(metodoPagamento);

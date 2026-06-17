@@ -4,7 +4,7 @@ import { PresentationCover } from '../components/layout/PresentationCover';
 import { LogoSection } from '../components/ui/LogoSection';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { register } from '../api/auth';
 
 export function Register() {

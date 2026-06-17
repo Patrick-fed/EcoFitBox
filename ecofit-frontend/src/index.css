@@ -11,4 +11,6 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: #EDE7DF;
   color: #1a1a2e;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }

@@ -2,6 +2,7 @@ package com.ecofit.apl.api.controller;
 
 import com.ecofit.apl.api.dto.*;
 import com.ecofit.apl.domain.service.PagamentoService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class PagamentoController {
     }
 
     @PostMapping("/criar")
-    public ResponseEntity<?> criar(@RequestBody PagamentoRequest request) {
+    public ResponseEntity<?> criar(@Valid @RequestBody PagamentoRequest request) {
         try {
             PagamentoResponse response = pagamentoService.processar(
                     request.getPedidoId(),

@@ -1,5 +1,5 @@
 # EcoFit - Script de Teste da API (Versão Nativa PowerShell)
-$BASE = "http://localhost:8080/api"
+$BASE = "http://localhost:65009/api"
 
 Write-Host "=== EcoFit API Test ===`n" -ForegroundColor Cyan
 
