@@ -29,7 +29,8 @@ export function CheckoutPage() {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState('');
 
   const taxaEntrega = planoAtivo ? 0 : 5;
-  const total = (box?.preco || 0) + taxaEntrega;
+  const desconto = planoAtivo ? (box?.preco || 0) * 0.10 : 0;
+  const total = (box?.preco || 0) + taxaEntrega - desconto;
 
   useEffect(() => {
     if (!boxId || !usuario) return;
@@ -83,13 +84,13 @@ export function CheckoutPage() {
     <div className="min-h-screen bg-[#EDE7DF]">
       <Navbar />
 
-      <div className="pt-20 px-6 pb-10 max-w-2xl mx-auto">
+      <div className="pt-20 px-4 md:px-6 pb-10 max-w-2xl mx-auto">
         <button onClick={() => navigate('/dashboard')} className="flex items-center gap-1 text-sm text-[#5B7B3A] hover:text-[#3C5A1A] mb-4 cursor-pointer">
           <ArrowLeft className="w-4 h-4" />
           Voltar
         </button>
 
-        <h1 className="text-2xl font-bold text-[#3C5A1A] mb-6">Checkout</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-[#3C5A1A] mb-6">Checkout</h1>
 
         <Card className="mb-6">
           <h2 className="font-bold text-[#3C5A1A] mb-3">Resumo do Pedido</h2>
@@ -117,6 +118,12 @@ export function CheckoutPage() {
                 {planoAtivo ? 'R$ 0,00 (plano ativo)' : `R$ ${taxaEntrega.toFixed(2)}`}
               </span>
             </div>
+            {planoAtivo && (
+              <div className="flex justify-between">
+                <span className="text-[#5B5B3A]">Desconto (plano ativo):</span>
+                <span className="text-green-600 font-medium">- R$ {desconto.toFixed(2)}</span>
+              </div>
+            )}
             <div className="border-t-2 border-[#3C5A1A] my-2" />
             <div className="flex justify-between text-lg">
               <span className="font-bold text-[#3C5A1A]">Total:</span>
@@ -159,7 +166,7 @@ export function CheckoutPage() {
                 placeholder="Número do cartão"
                 className="w-full px-3 py-2 rounded-lg border border-[#D8D4C5] text-sm focus:outline-none focus:ring-2 focus:ring-[#A3B27A]"
               />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input
                   type="text"
                   placeholder="Validade (MM/AA)"

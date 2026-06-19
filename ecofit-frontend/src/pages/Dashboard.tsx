@@ -32,7 +32,7 @@ export function Dashboard() {
 
   const filtros: { label: string; value: string; icon: typeof Coffee }[] = [
     { label: 'Todas', value: '', icon: Star },
-    { label: 'Café da Manhã', value: 'cafe', icon: Coffee },
+    { label: 'Café da Manhã', value: 'cafe_da_manha', icon: Coffee },
     { label: 'Almoço', value: 'almoco', icon: UtensilsCrossed },
     { label: 'Jantar', value: 'jantar', icon: Pizza },
   ];
@@ -43,7 +43,7 @@ export function Dashboard() {
       : boxes;
 
     return {
-      cafe: filtered.filter((b) => (b.tipoRefeicao === 'cafe' || !b.tipoRefeicao) && b.tipo === 'padrao'),
+      cafe: filtered.filter((b) => (b.tipoRefeicao === 'cafe_da_manha' || !b.tipoRefeicao) && b.tipo === 'padrao'),
       almoco: filtered.filter((b) => b.tipoRefeicao === 'almoco' && b.tipo === 'padrao'),
       jantar: filtered.filter((b) => b.tipoRefeicao === 'jantar' && b.tipo === 'padrao'),
       personalizado: filtered.filter((b) => b.tipo === 'personalizado'),
@@ -51,7 +51,7 @@ export function Dashboard() {
   }, [boxes, filtro]);
 
   const mealEmoji = (box: BoxResponse) =>
-    box.tipoRefeicao === 'cafe' ? '☕' : box.tipoRefeicao === 'almoco' ? '🥙' : box.tipoRefeicao === 'jantar' ? '🍽️' : '📦';
+    box.tipoRefeicao === 'cafe_da_manha' ? '☕' : box.tipoRefeicao === 'almoco' ? '🥙' : box.tipoRefeicao === 'jantar' ? '🍽️' : '📦';
 
   const renderBoxCard = (box: BoxResponse) => (
     <Card
@@ -79,16 +79,16 @@ export function Dashboard() {
       <Navbar />
 
       <div
-        className={`pt-20 px-6 pb-10 max-w-[1600px] mx-auto transition-all duration-300 ${
+        className={`pt-20 px-4 md:px-6 pb-10 max-w-[1600px] mx-auto transition-all duration-300 ${
           sidebarOpen ? 'lg:pr-80' : 'lg:pr-16'
         }`}
       >
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#3C5A1A]">Olá, {usuario?.nome}!</h1>
-            <p className="text-[#5B5B3A] mt-1">Escolha sua box perfeita para hoje</p>
+            <h1 className="text-xl md:text-3xl font-bold text-[#3C5A1A]">Olá, {usuario?.nome}!</h1>
+            <p className="text-[#5B5B3A] mt-1 text-sm md:text-base">Escolha sua box perfeita para hoje</p>
           </div>
-          <Button variant="primary" onClick={() => navigate('/personalizar')} className="flex items-center gap-2">
+          <Button variant="primary" onClick={() => navigate('/personalizar')} className="flex items-center gap-2 w-full sm:w-auto justify-center">
             <Settings className="w-4 h-4" />
             Montar minha box
           </Button>
@@ -97,8 +97,8 @@ export function Dashboard() {
         {maisPedidas.length > 0 && (
           <>
             <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="w-5 h-5 text-[#5B7B3A]" />
-              <h2 className="text-lg font-bold text-[#3C5A1A]">Boxes mais pedidas</h2>
+              <TrendingUp className="w-4 md:w-5 h-4 md:h-5 text-[#5B7B3A]" />
+              <h2 className="text-base md:text-lg font-bold text-[#3C5A1A]">Boxes mais pedidas</h2>
             </div>
             <div className={`flex gap-4 overflow-x-auto pb-4 mb-8 scrollbar-thin ${sidebarOpen ? 'lg:pr-80' : 'lg:pr-16'}`}>
               {maisPedidas.map((box) => (
@@ -124,7 +124,7 @@ export function Dashboard() {
           </>
         )}
 
-        <div className="flex gap-2 mb-8 flex-wrap">
+        <div className="flex gap-2 mb-8 flex-wrap overflow-x-auto pb-2">
           {filtros.map(({ label, value, icon: Icon }) => (
             <button
               key={value}
@@ -146,7 +146,7 @@ export function Dashboard() {
             filtro === '' ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4' : 'grid-cols-1 md:grid-cols-2'
           }`}
         >
-          {(filtro === '' || filtro === 'cafe') && (
+          {(filtro === '' || filtro === 'cafe_da_manha') && (
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
                 <Coffee className="w-5 h-5 text-[#5B7B3A]" />

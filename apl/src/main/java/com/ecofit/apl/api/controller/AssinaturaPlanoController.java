@@ -8,6 +8,8 @@ import com.ecofit.apl.domain.service.AssinaturaPlanoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/assinaturas")
 public class AssinaturaPlanoController {
@@ -21,12 +23,10 @@ public class AssinaturaPlanoController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<?> buscarAtivo(@PathVariable Integer usuarioId) {
-        var opt = service.buscarAtivoPorUsuario(usuarioId);
-        if (opt.isPresent()) {
-            return ResponseEntity.ok(AssinaturaPlanoResponse.from(opt.get()));
-        }
-        return ResponseEntity.ok("Nenhum plano ativo encontrado");
+    public ResponseEntity<AssinaturaPlanoResponse> buscarAtivo(@PathVariable Integer usuarioId) {
+        return service.buscarAtivoPorUsuario(usuarioId)
+                .map(a -> ResponseEntity.ok(AssinaturaPlanoResponse.from(a)))
+                .orElse(ResponseEntity.noContent().build());
     }
 
     @PostMapping
@@ -37,8 +37,8 @@ public class AssinaturaPlanoController {
         AssinaturaPlano assinatura = new AssinaturaPlano();
         assinatura.setUsuario(usuario);
         assinatura.setPlano(request.getPlano());
-        assinatura.setDataInicio(request.getDataInicio());
-        assinatura.setDataFim(request.getDataFim());
+        assinatura.setDataInicio(LocalDate.parse(request.getDataInicio()));
+        assinatura.setDataFim(LocalDate.parse(request.getDataFim()));
         return ResponseEntity.ok(AssinaturaPlanoResponse.from(service.salvar(assinatura)));
     }
 }

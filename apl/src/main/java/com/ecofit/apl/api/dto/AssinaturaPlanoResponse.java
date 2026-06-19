@@ -2,15 +2,13 @@ package com.ecofit.apl.api.dto;
 
 import com.ecofit.apl.domain.model.AssinaturaPlano;
 
-import java.time.LocalDate;
-
 public class AssinaturaPlanoResponse {
     private Integer id;
     private Integer usuarioId;
     private String plano;
     private Boolean ativo;
-    private LocalDate dataInicio;
-    private LocalDate dataFim;
+    private String dataInicio;
+    private String dataFim;
 
     public static AssinaturaPlanoResponse from(AssinaturaPlano a) {
         AssinaturaPlanoResponse r = new AssinaturaPlanoResponse();
@@ -18,8 +16,8 @@ public class AssinaturaPlanoResponse {
         r.setUsuarioId(a.getUsuario().getId());
         r.setPlano(a.getPlano());
         r.setAtivo(a.getAtivo());
-        r.setDataInicio(a.getDataInicio());
-        r.setDataFim(a.getDataFim());
+        r.setDataInicio(a.getDataInicio().toString());
+        r.setDataFim(a.getDataFim().toString());
         return r;
     }
 
@@ -31,8 +29,8 @@ public class AssinaturaPlanoResponse {
     public void setPlano(String plano) { this.plano = plano; }
     public Boolean getAtivo() { return ativo; }
     public void setAtivo(Boolean ativo) { this.ativo = ativo; }
-    public LocalDate getDataInicio() { return dataInicio; }
-    public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
-    public LocalDate getDataFim() { return dataFim; }
-    public void setDataFim(LocalDate dataFim) { this.dataFim = dataFim; }
+    public String getDataInicio() { return dataInicio; }
+    public void setDataInicio(String dataInicio) { this.dataInicio = dataInicio; }
+    public String getDataFim() { return dataFim; }
+    public void setDataFim(String dataFim) { this.dataFim = dataFim; }
 }

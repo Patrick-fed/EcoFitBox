@@ -1,13 +1,13 @@
 export function DecorativeLeaves() {
   return (
     <>
-      <div className="absolute top-12 right-20 text-[#8FA86A] rotate-12 opacity-50">
+      <div className="hidden md:block absolute top-12 right-20 text-[#8FA86A] rotate-12 opacity-50">
         <LeafSvg />
       </div>
-      <div className="absolute bottom-16 left-12 text-[#8FA86A] -rotate-12 opacity-40">
+      <div className="hidden md:block absolute bottom-16 left-12 text-[#8FA86A] -rotate-12 opacity-40">
         <LeafSvg />
       </div>
-      <div className="absolute bottom-24 right-16 text-[#8FA86A] rotate-45 opacity-30">
+      <div className="hidden md:block absolute bottom-24 right-16 text-[#8FA86A] rotate-45 opacity-30">
         <LeafSvg />
       </div>
     </>

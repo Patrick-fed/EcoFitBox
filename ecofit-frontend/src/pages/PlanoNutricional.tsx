@@ -90,7 +90,7 @@ export function PlanoNutricional() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input label="Objetivo" value={objetivo} onChange={(e) => setObjetivo(e.target.value)} placeholder="Ex: Perda de peso, ganho muscular" />
             <Input label="Restrições alimentares" value={restricoes} onChange={(e) => setRestricoes(e.target.value)} placeholder="Ex: Sem glúten, sem lactose" />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input label="Calorias diárias (kcal)" type="number" value={calorias} onChange={(e) => setCalorias(e.target.value)} placeholder="2000" />
               <Input label="Proteínas (g)" type="number" value={proteinas} onChange={(e) => setProteinas(e.target.value)} placeholder="120" />
               <Input label="Carboidratos (g)" type="number" value={carboidratos} onChange={(e) => setCarboidratos(e.target.value)} placeholder="250" />

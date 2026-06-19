@@ -20,7 +20,7 @@ services:
     ports:
       - "65009:65009"
     environment:
-      DB_URL: jdbc:postgresql://db:5432/banco_ecofit
+      DB_URL: jdbc:postgresql://db:5432/banco_ecofit?characterEncoding=UTF-8
       DB_USER: postgres
       DB_PASSWORD: postgres
       JWT_SECRET: ${JWT_SECRET}

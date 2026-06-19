@@ -47,9 +47,11 @@ public class PedidoService {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        BigDecimal taxaEntrega = assinaturaService.buscarAtivoPorUsuario(usuario.getId())
-                .map(a -> BigDecimal.ZERO)
-                .orElse(new BigDecimal("5.00"));
+        boolean temPlanoAtivo = assinaturaService.buscarAtivoPorUsuario(usuario.getId()).isPresent();
+        BigDecimal taxaEntrega = temPlanoAtivo ? BigDecimal.ZERO : new BigDecimal("5.00");
+        BigDecimal desconto = temPlanoAtivo
+                ? box.getPreco().multiply(new BigDecimal("0.10"))
+                : BigDecimal.ZERO;
 
         String endereco = enderecoEntrega != null ? enderecoEntrega : usuario.getEndereco();
 
@@ -59,6 +61,7 @@ public class PedidoService {
         pedido.setEnderecoEntrega(endereco);
         pedido.setMetodoPagamento(metodoPagamento);
         pedido.setTaxaEntrega(taxaEntrega);
+        pedido.setDesconto(desconto);
         return repository.save(pedido);
     }
 
@@ -112,6 +115,10 @@ public class PedidoService {
         if (nota == null || nota < 1 || nota > 5)
             throw new IllegalArgumentException("Nota deve ser entre 1 e 5");
         Pedido pedido = repository.findById(id).orElseThrow();
+        if (!"entregue".equals(pedido.getStatus()))
+            throw new IllegalStateException("Só é possível avaliar pedidos entregues");
+        if (pedido.getAvaliacao() != null)
+            throw new IllegalStateException("Pedido já foi avaliado");
         pedido.setAvaliacao(nota);
         return repository.save(pedido);
     }

@@ -12,6 +12,7 @@ const statusConfig: Record<string, { label: string; icon: typeof Clock; color: s
   pendente: { label: 'Pendente', icon: Clock, color: 'text-yellow-500' },
   pago: { label: 'Pago', icon: DollarSign, color: 'text-green-600' },
   em_preparo: { label: 'Em Preparo', icon: Package, color: 'text-blue-500' },
+  em_andamento: { label: 'Em Andamento', icon: Truck, color: 'text-blue-500' },
   entregue: { label: 'Entregue', icon: CheckCircle, color: 'text-green-500' },
 };
 
@@ -63,8 +64,8 @@ export function Historico() {
     <div className="min-h-screen bg-[#EDE7DF]">
       <Navbar />
 
-      <div className="pt-20 px-6 pb-10 max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold text-[#3C5A1A] mb-6 flex items-center gap-2">
+      <div className="pt-20 px-4 md:px-6 pb-10 max-w-3xl mx-auto">
+        <h1 className="text-xl md:text-2xl font-bold text-[#3C5A1A] mb-6 flex items-center gap-2">
           <Package className="w-6 h-6" />
           Histórico de Pedidos
         </h1>
@@ -84,9 +85,9 @@ export function Historico() {
 
               return (
                 <Card key={pedido.id}>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-0">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
                         <span className="font-bold text-[#3C5A1A]">Pedido #{pedido.id}</span>
                         <span className={`text-xs font-semibold flex items-center gap-1 ${color}`}>
                           <StatusIcon className="w-3.5 h-3.5" />
@@ -100,14 +101,14 @@ export function Historico() {
                         })}
                       </p>
 
-                      <div className="flex items-center gap-4 mt-2 text-sm">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-2 text-sm">
                         <span className="text-[#5B5B3A]">Pagamento: <span className="font-medium capitalize">{pedido.metodoPagamento}</span></span>
                         <span className="text-[#5B5B3A]">Frete: <span className="font-medium">{pedido.taxaEntrega > 0 ? 'R$ 5,00' : 'Grátis (plano ativo)'}</span></span>
                         <span className="text-[#5B5B3A]">Total: <span className="font-bold text-[#3C5A1A]">R$ {(pedido.total ?? 0).toFixed(2)}</span></span>
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-end gap-2 ml-4">
+                    <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2 sm:ml-4 flex-wrap">
                       {pedido.status === 'entregue' && !pedido.avaliacao && (
                         <Button
                           variant="secondary"

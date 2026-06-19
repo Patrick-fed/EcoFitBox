@@ -10,18 +10,18 @@ export function Landing() {
 
   return (
     <PresentationCover>
-      <div className="grid grid-cols-1 lg:grid-cols-2 h-screen">
-        <div className="flex flex-col justify-center items-center px-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
+        <div className="flex flex-col justify-center items-center px-4 md:px-8 py-8">
           <LogoSection subtitle="ALIMENTAÇÃO SAUDÁVEL" />
 
-          <div className="mt-10 space-y-6">
+          <div className="mt-8 md:mt-10 space-y-4 md:space-y-6">
             <div className="flex gap-4 items-start">
               <CircleIcon>
                 <Users className="w-6 h-6 text-[#3C5A1A]" />
               </CircleIcon>
               <div>
                 <h3 className="font-bold text-[#3C5A1A] text-sm tracking-wider">ALUNOS:</h3>
-                <p className="text-[#5B5B3A] text-sm leading-relaxed max-w-xs">
+                <p className="text-[#5B5B3A] text-sm leading-relaxed max-w-xs break-words">
                   CARINE DE OLIVEIRA, EMILI LORENZETTI, EMILY TOGNON E LETICIA SILVESTRE MARIN
                 </p>
               </div>
@@ -37,11 +37,11 @@ export function Landing() {
             </div>
           </div>
 
-          <div className="mt-10 flex gap-4">
-            <Button variant="primary" onClick={() => navigate('/register')}>
+          <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0">
+            <Button variant="primary" onClick={() => navigate('/register')} className="w-full sm:w-auto justify-center">
               Criar Conta <ArrowRight className="w-4 h-4 inline ml-1" />
             </Button>
-            <Button variant="outline" onClick={() => navigate('/login')}>
+            <Button variant="outline" onClick={() => navigate('/login')} className="w-full sm:w-auto justify-center">
               Entrar
             </Button>
           </div>

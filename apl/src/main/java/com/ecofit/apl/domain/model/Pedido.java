@@ -41,6 +41,9 @@ public class Pedido {
     @Column
     private Integer avaliacao;
 
+    @Column(name = "desconto", precision = 10, scale = 2)
+    private BigDecimal desconto;
+
     @Column(name = "payment_id")
     private String paymentId;
 
@@ -64,6 +67,9 @@ public class Pedido {
     public void setDataConfirmacaoEntrega(LocalDateTime dataConfirmacaoEntrega) { this.dataConfirmacaoEntrega = dataConfirmacaoEntrega; }
     public Integer getAvaliacao() { return avaliacao; }
     public void setAvaliacao(Integer avaliacao) { this.avaliacao = avaliacao; }
+    public BigDecimal getDesconto() { return desconto; }
+    public void setDesconto(BigDecimal desconto) { this.desconto = desconto; }
+
     public String getPaymentId() { return paymentId; }
     public void setPaymentId(String paymentId) { this.paymentId = paymentId; }
 }

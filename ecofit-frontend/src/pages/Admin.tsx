@@ -3,6 +3,7 @@ import { Navbar } from '../components/layout/Navbar';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { Select } from '../components/ui/Select';
 import { listarItens, criarItem, atualizarItem, deletarItem } from '../api/itens';
 import { listarBoxes, criarBox } from '../api/boxes';
 import { listarUsuarios, atualizarTipoUsuario } from '../api/usuarios';
@@ -114,7 +115,8 @@ function ItensTab() {
         </Card>
       )}
 
-      <div className="bg-white rounded-xl shadow-md border border-[#D8D4C5] overflow-hidden">
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white rounded-xl shadow-md border border-[#D8D4C5] overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-[#F5F2EB] text-[#3C5A1A] text-left">
@@ -145,6 +147,36 @@ function ItensTab() {
           </tbody>
         </table>
         {itens.length === 0 && <div className="text-center py-12 text-[#8FA86A]"><Package className="w-12 h-12 mx-auto mb-3 opacity-50" /><p>Nenhum item cadastrado</p></div>}
+      </div>
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {itens.length === 0 ? (
+          <div className="text-center py-12 text-[#8FA86A]"><Package className="w-12 h-12 mx-auto mb-3 opacity-50" /><p>Nenhum item cadastrado</p></div>
+        ) : (
+          itens.map((item) => (
+            <div key={item.id} className="bg-white rounded-xl shadow-md border border-[#D8D4C5] p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[#8FA86A] font-mono text-xs">#{item.id}</span>
+                <div className="flex gap-1">
+                  <button onClick={() => openEdit(item)} className="p-2 text-[#5B7B3A] hover:bg-[#E8F0DA] rounded-lg transition cursor-pointer" title="Editar"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => handleDelete(item.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition cursor-pointer" title="Remover"><Trash2 className="w-4 h-4" /></button>
+                </div>
+              </div>
+              <h3 className="font-bold text-[#1a1a2e] text-base">{item.itemNome}</h3>
+              <p className="text-sm text-[#5B5B3A] mt-0.5">{item.itemDescricao || '-'}</p>
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#D8D4C5]">
+                <div>
+                  <span className="text-xs text-[#5B5B3A]">Custo</span>
+                  <p className="text-sm font-semibold">R$ {item.itemCusto.toFixed(2)}</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-[#5B5B3A]">Preço</span>
+                  <p className="text-sm font-bold text-[#3C5A1A]">R$ {item.itemValor.toFixed(2)}</p>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </>
   );
@@ -182,7 +214,8 @@ function UsuariosTab() {
 
       {error && <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-4 text-sm"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>}
 
-      <div className="bg-white rounded-xl shadow-md border border-[#D8D4C5] overflow-hidden">
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white rounded-xl shadow-md border border-[#D8D4C5] overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-[#F5F2EB] text-[#3C5A1A] text-left">
@@ -220,6 +253,34 @@ function UsuariosTab() {
           </tbody>
         </table>
         {usuarios.length === 0 && <div className="text-center py-12 text-[#8FA86A]"><Users className="w-12 h-12 mx-auto mb-3 opacity-50" /><p>Nenhum usuário encontrado</p></div>}
+      </div>
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {usuarios.length === 0 ? (
+          <div className="text-center py-12 text-[#8FA86A]"><Users className="w-12 h-12 mx-auto mb-3 opacity-50" /><p>Nenhum usuário encontrado</p></div>
+        ) : (
+          usuarios.map((u) => (
+            <div key={u.id} className="bg-white rounded-xl shadow-md border border-[#D8D4C5] p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[#8FA86A] font-mono text-xs">#{u.id}</span>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${u.tipo === 'ADMIN' ? 'bg-purple-100 text-purple-700' : u.tipo === 'ENTREGADOR' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>{u.tipo || 'CLIENTE'}</span>
+              </div>
+              <h3 className="font-bold text-[#1a1a2e] text-base">{u.nome}</h3>
+              <p className="text-sm text-[#5B5B3A]">{u.email}</p>
+              <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-[#D8D4C5]">
+                {u.tipo !== 'ADMIN' && (
+                  <>
+                    <button onClick={() => alterarTipo(u.id, 'ENTREGADOR')} disabled={loading} className="px-3 py-1.5 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 cursor-pointer disabled:opacity-50">Tornar Entregador</button>
+                    <button onClick={() => alterarTipo(u.id, 'ADMIN')} disabled={loading} className="px-3 py-1.5 text-xs bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 cursor-pointer disabled:opacity-50">Tornar Admin</button>
+                  </>
+                )}
+                {u.tipo === 'ADMIN' && (
+                  <button onClick={() => alterarTipo(u.id, 'CLIENTE')} disabled={loading} className="px-3 py-1.5 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200 cursor-pointer disabled:opacity-50">Rebaixar</button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </>
   );
@@ -281,7 +342,17 @@ function BoxesTab() {
               <Input label="Nome" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: Box Fit" required />
               <Input label="Preço (R$)" type="number" step="0.01" value={preco} onChange={(e) => setPreco(e.target.value)} placeholder="39.90" required />
               <Input label="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descrição da box" />
-              <Input label="Tipo de Refeição" value={tipoRefeicao} onChange={(e) => setTipoRefeicao(e.target.value)} placeholder="cafe, almoco, jantar" />
+              <Select
+                label="Tipo de Refeição"
+                value={tipoRefeicao}
+                onChange={(e) => setTipoRefeicao(e.target.value)}
+                placeholder="Selecione..."
+                options={[
+                  { value: 'cafe', label: 'Café da Manhã' },
+                  { value: 'almoco', label: 'Almoço' },
+                  { value: 'jantar', label: 'Jantar' },
+                ]}
+              />
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="submit" variant="primary" disabled={loading} className="flex items-center gap-2"><Check className="w-4 h-4" />{loading ? 'Salvando...' : 'Criar'}</Button>
@@ -291,7 +362,8 @@ function BoxesTab() {
         </Card>
       )}
 
-      <div className="bg-white rounded-xl shadow-md border border-[#D8D4C5] overflow-hidden">
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white rounded-xl shadow-md border border-[#D8D4C5] overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-[#F5F2EB] text-[#3C5A1A] text-left">
@@ -315,6 +387,27 @@ function BoxesTab() {
           </tbody>
         </table>
         {boxes.length === 0 && <div className="text-center py-12 text-[#8FA86A]"><Box className="w-12 h-12 mx-auto mb-3 opacity-50" /><p>Nenhuma box cadastrada</p></div>}
+      </div>
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {boxes.length === 0 ? (
+          <div className="text-center py-12 text-[#8FA86A]"><Box className="w-12 h-12 mx-auto mb-3 opacity-50" /><p>Nenhuma box cadastrada</p></div>
+        ) : (
+          boxes.map((box) => (
+            <div key={box.id} className="bg-white rounded-xl shadow-md border border-[#D8D4C5] p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[#8FA86A] font-mono text-xs">#{box.id}</span>
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[#E8F0DA] text-[#3C5A1A]">{box.tipo}</span>
+              </div>
+              <h3 className="font-bold text-[#1a1a2e] text-base">{box.nome}</h3>
+              <p className="text-sm text-[#5B5B3A] mt-0.5">{box.descricao || '-'}</p>
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#D8D4C5]">
+                <span className="text-xs text-[#5B5B3A]">Preço</span>
+                <span className="font-bold text-[#3C5A1A]">R$ {box.preco.toFixed(2)}</span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </>
   );

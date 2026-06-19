@@ -85,6 +85,7 @@ export interface PedidoResponse {
   enderecoEntrega: string;
   metodoPagamento: string;
   taxaEntrega: number;
+  desconto: number;
   total: number;
   dataConfirmacaoEntrega?: string;
   avaliacao?: number;

@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Configuration
@@ -40,11 +41,16 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) ->
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/boxes", "/api/itens").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/boxes", "/api/planos-nutricionais").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/boxes").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/planos-nutricionais").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/boxes/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/usuarios/*/tipo").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/pedidos/*/status").hasAnyRole("ENTREGADOR", "ADMIN")

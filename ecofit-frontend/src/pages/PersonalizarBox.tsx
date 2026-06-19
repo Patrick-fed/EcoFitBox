@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../context/useAuth';
 import { listarItens } from '../api/itens';
 import { criarBox } from '../api/boxes';
 import type { ItemResponse } from '../types';
-import { Plus, Minus, ArrowLeft, ShoppingCart } from 'lucide-react';
+import { Plus, Minus, ArrowLeft, ShoppingCart, AlertCircle } from 'lucide-react';
 
 interface ItemSelecionado extends ItemResponse {
   quantidade: number;
@@ -20,6 +21,7 @@ export function PersonalizarBox() {
   const [selecionados, setSelecionados] = useState<ItemSelecionado[]>([]);
   const [nomeBox, setNomeBox] = useState('Minha Box Personalizada');
   const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState('');
 
   useEffect(() => {
     listarItens().then(setItens).catch(() => {});
@@ -59,8 +61,9 @@ export function PersonalizarBox() {
         itens: selecionados.map((i) => ({ itemId: i.id, quantidade: i.quantidade })),
       });
       navigate('/checkout', { state: { boxId: box.id } });
-    } catch {
-      alert('Erro ao criar box personalizada');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Erro ao criar box personalizada';
+      setErro(msg);
     } finally {
       setLoading(false);
     }
@@ -70,13 +73,13 @@ export function PersonalizarBox() {
     <div className="min-h-screen bg-[#EDE7DF]">
       <Navbar />
 
-      <div className="pt-20 px-6 pb-10 max-w-6xl mx-auto">
+      <div className="pt-20 px-4 md:px-6 pb-10 max-w-6xl mx-auto">
         <button onClick={() => navigate('/dashboard')} className="flex items-center gap-1 text-sm text-[#5B7B3A] hover:text-[#3C5A1A] mb-4 cursor-pointer">
           <ArrowLeft className="w-4 h-4" />
           Voltar
         </button>
 
-        <h1 className="text-2xl font-bold text-[#3C5A1A] mb-6">Monte sua Box</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-[#3C5A1A] mb-6">Monte sua Box</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
@@ -100,7 +103,7 @@ export function PersonalizarBox() {
           </div>
 
           <div className="lg:col-span-1">
-            <Card className="sticky top-24">
+            <Card className="lg:sticky lg:top-24">
               <h2 className="font-bold text-[#3C5A1A] mb-3 flex items-center gap-2">
                 <ShoppingCart className="w-4 h-4" />
                 Sua Box
@@ -157,6 +160,20 @@ export function PersonalizarBox() {
           </div>
         </div>
       </div>
+      <Modal open={!!erro} onClose={() => setErro('')} title="Erro ao criar box">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm text-[#5B5B3A] mb-3">{erro}</p>
+            <p className="text-xs text-[#8FA86A]">
+              Verifique se o servidor backend está rodando e tente novamente.
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <Button variant="primary" onClick={() => setErro('')}>Fechar</Button>
+        </div>
+      </Modal>
     </div>
   );
 }

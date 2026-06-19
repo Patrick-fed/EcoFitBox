@@ -14,6 +14,7 @@ public class PedidoResponse {
     private String enderecoEntrega;
     private String metodoPagamento;
     private BigDecimal taxaEntrega;
+    private BigDecimal desconto;
     private BigDecimal total;
     private LocalDateTime dataConfirmacaoEntrega;
     private Integer avaliacao;
@@ -35,6 +36,8 @@ public class PedidoResponse {
     public void setMetodoPagamento(String metodoPagamento) { this.metodoPagamento = metodoPagamento; }
     public BigDecimal getTaxaEntrega() { return taxaEntrega; }
     public void setTaxaEntrega(BigDecimal taxaEntrega) { this.taxaEntrega = taxaEntrega; }
+    public BigDecimal getDesconto() { return desconto; }
+    public void setDesconto(BigDecimal desconto) { this.desconto = desconto; }
     public BigDecimal getTotal() { return total; }
     public void setTotal(BigDecimal total) { this.total = total; }
     public LocalDateTime getDataConfirmacaoEntrega() { return dataConfirmacaoEntrega; }
@@ -54,10 +57,12 @@ public class PedidoResponse {
         r.setEnderecoEntrega(p.getEnderecoEntrega());
         r.setMetodoPagamento(p.getMetodoPagamento());
         r.setTaxaEntrega(p.getTaxaEntrega());
+        r.setDesconto(p.getDesconto());
         BigDecimal preco = p.getBox() != null && p.getBox().getPreco() != null
                 ? p.getBox().getPreco() : BigDecimal.ZERO;
         BigDecimal taxa = p.getTaxaEntrega() != null ? p.getTaxaEntrega() : BigDecimal.ZERO;
-        r.setTotal(preco.add(taxa));
+        BigDecimal desconto = p.getDesconto() != null ? p.getDesconto() : BigDecimal.ZERO;
+        r.setTotal(preco.add(taxa).subtract(desconto));
         r.setDataConfirmacaoEntrega(p.getDataConfirmacaoEntrega());
         r.setAvaliacao(p.getAvaliacao());
         r.setPaymentId(p.getPaymentId());

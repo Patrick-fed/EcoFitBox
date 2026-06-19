@@ -42,10 +42,10 @@ export function EntregadorPedidos() {
     <div className="min-h-screen bg-[#EDE7DF]">
       <Navbar />
 
-      <div className="pt-20 px-6 pb-10 max-w-3xl mx-auto">
+      <div className="pt-20 px-4 md:px-6 pb-10 max-w-3xl mx-auto">
         <div className="flex items-center gap-2 mb-6">
-          <Truck className="w-6 h-6 text-[#3C5A1A]" />
-          <h1 className="text-2xl font-bold text-[#3C5A1A]">Entregas</h1>
+          <Truck className="w-5 md:w-6 h-5 md:h-6 text-[#3C5A1A]" />
+          <h1 className="text-xl md:text-2xl font-bold text-[#3C5A1A]">Entregas</h1>
         </div>
 
         {error && (
@@ -64,27 +64,27 @@ export function EntregadorPedidos() {
         ) : (
           <div className="space-y-4">
             {pedidos.map((pedido) => (
-              <div key={pedido.id} className="bg-white rounded-xl shadow-md border border-[#D8D4C5] p-5">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
+              <div key={pedido.id} className="bg-white rounded-xl shadow-md border border-[#D8D4C5] p-4 md:p-5">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
                       <span className="text-[#8FA86A] font-mono text-xs">#{pedido.id}</span>
                       <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${pedido.status === 'em_andamento' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>
                         {statusLabel[pedido.status] || pedido.status}
                       </span>
                     </div>
-                    <div className="mt-2 flex items-center gap-1 text-sm text-[#5B5B3A]">
-                      <MapPin className="w-4 h-4" />
-                      {pedido.enderecoEntrega}
+                    <div className="flex items-start gap-1 text-sm text-[#5B5B3A] break-words">
+                      <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span>{pedido.enderecoEntrega}</span>
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-row sm:flex-col gap-2 sm:ml-4">
                     {pedido.status === 'em_preparo' && (
                       <button
                         onClick={() => avancar(pedido.id, 'em_andamento')}
                         disabled={loading}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm font-medium cursor-pointer disabled:opacity-50"
+                        className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm font-medium cursor-pointer disabled:opacity-50 whitespace-nowrap"
                       >
                         <Truck className="w-4 h-4" />
                         Em Andamento
@@ -94,7 +94,7 @@ export function EntregadorPedidos() {
                       <button
                         onClick={() => avancar(pedido.id, 'entregue')}
                         disabled={loading}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm font-medium cursor-pointer disabled:opacity-50"
+                        className="flex items-center gap-1 px-3 py-1.5 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm font-medium cursor-pointer disabled:opacity-50 whitespace-nowrap"
                       >
                         <Check className="w-4 h-4" />
                         Entregue
